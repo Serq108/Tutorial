@@ -77,24 +77,27 @@ class CourseListSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'title', 'descrpt', 'owner')
 
 
+class CoursePageSerializer(serializers.HyperlinkedModelSerializer):
+    # snippet = serializers.HyperlinkedRelatedField(many=False, view_name='snippet-detail', read_only=True)
+    title = serializers.ReadOnlyField(source='snippet.title')
+    class Meta:
+        model = CoursePage
+        fields = ('order',  'title', 'dtm','snippet')
+
+
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
     # pages = serializers.StringRelatedField(many=True)
-    pages = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name='coursepage-detail',
-        read_only=True
-    )
+    # pages_listing = serializers.HyperlinkedIdentityField(view_name='coursepage-list')
+    pages = CoursePageSerializer(many=True, read_only=True)
+    # ~ pages = serializers.HyperlinkedRelatedField(
+        # ~ many=True,
+        # ~ view_name='coursepage-detail',
+        # ~ read_only=True
+    # ~ )
 
     class Meta:
         model = CourseList
         fields = ('title', 'descrpt', 'pages')
-
-
-class CoursePageSerializer(serializers.HyperlinkedModelSerializer):
-    # snippet = serializers.HyperlinkedRelatedField(many=False, view_name='snippet-detail', read_only=True)
-    class Meta:
-        model = CoursePage
-        fields = ('url', 'order', 'course', 'snippet')
 
 
 class CourseDetailPageSerializer(serializers.HyperlinkedModelSerializer):
